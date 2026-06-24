@@ -1025,6 +1025,28 @@ button{border-color:var(--line);background:linear-gradient(#fffaf0,#f4eadb)}
 @media(max-width:760px){.mini-controls{margin-left:auto;margin-right:auto}}
 /* Compact elapsed-time display for playable mini games. */
 .mini-timer{min-width:74px;padding:.55rem .72rem;border:1px solid #d5bd95;border-radius:12px;background:#fff8e8;color:#3f3427;box-shadow:inset 0 1px rgba(255,250,240,.9);font-variant-numeric:tabular-nums;font-size:.94rem;font-weight:850;letter-spacing:.035em;text-align:center;white-space:nowrap}
+/* Mobile-safe layout: prevent horizontal clipping and keep game controls readable. */
+@media(max-width:760px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden}
+  body{padding:8px}
+  .app,.mini-game-layout,.mini-main,.mini-side{width:100%;min-width:0}
+  .mini-game-layout{padding-top:44px}
+  .mini-head{display:grid;grid-template-columns:1fr;justify-items:center;gap:10px;text-align:center}
+  .mini-title{justify-content:center;text-align:left}
+  .mini-timer{justify-self:center}
+  .mini-controls{display:flex!important;width:100%!important;justify-content:center!important;gap:7px}
+  .mini-controls .mini-size-control{flex:1 1 140px;width:auto!important;max-width:210px;justify-content:space-between}
+  .patch-board,.sudoku-board,.zip-board,.tango-wrap{margin-left:auto;margin-right:auto}
+  .mini-actions{width:100%}
+}
+/* Mobile back navigation stays in flow and cannot overlap game content. */
+@media(max-width:760px){
+  .game-screen{position:relative}
+  .suite-back{position:static!important;display:inline-flex;margin:0 0 10px 2px;vertical-align:top}
+  .mini-game-screen{padding-top:0}
+  .mini-game-layout{padding-top:0!important}
+  #queensScreen .app{margin-top:0}
+}
 </style>
 </head>
 <body>
@@ -1559,7 +1581,7 @@ function patchRectCandidatesForClue(clueIndex){var clue=patchClues[clueIndex],cr
 function countPatchSolutions(limit){var clueCount=patchClueIndices.length,cellCount=patchSize*patchSize,fullClues=(1n<<BigInt(clueCount))-1n,fullCells=(1n<<BigInt(cellCount))-1n,rows=[],byClue=Array.from({length:clueCount},function(){return[]}),byCell=Array.from({length:cellCount},function(){return[]});for(var ci=0;ci<clueCount;ci++){var clue=patchClueIndices[ci],candidates=patchRectCandidatesForClue(clue);if(!candidates.length)return 0;for(var k=0;k<candidates.length;k++){var mask=0n;for(var z=0;z<candidates[k].length;z++)mask|=1n<<BigInt(candidates[k][z]);var row={clue:ci,clueBit:1n<<BigInt(ci),mask:mask},ri=rows.length;rows.push(row);byClue[ci].push(ri);for(z=0;z<candidates[k].length;z++)byCell[candidates[k][z]].push(ri)}}var memo=new Map(),visits=0,budget=12000;function validRows(list,assigned,used){var out=[];for(var i=0;i<list.length;i++){var row=rows[list[i]];if(!(assigned&row.clueBit)&&!(used&row.mask))out.push(list[i])}return out}function dfs(assigned,used){if(++visits>budget)return limit;if(assigned===fullClues)return used===fullCells?1:0;var key=assigned.toString(36)+'|'+used.toString(36),cached=memo.get(key);if(cached!=null)return cached;var best=null;for(var ci=0;ci<clueCount;ci++)if(!(assigned&(1n<<BigInt(ci)))){var options=validRows(byClue[ci],assigned,used);if(!options.length){memo.set(key,0);return 0}if(best===null||options.length<best.length)best=options}for(var cell=0;cell<cellCount;cell++)if(!(used&(1n<<BigInt(cell)))){options=validRows(byCell[cell],assigned,used);if(!options.length){memo.set(key,0);return 0}if(best===null||options.length<best.length)best=options}var total=0;for(var b=0;b<best.length;b++){var row=rows[best[b]];total+=dfs(assigned|row.clueBit,used|row.mask);if(total>=limit){total=limit;break}}memo.set(key,total);return total}return dfs(0n,0n)}
 function patchSignature(){return patchSize+'|'+patchClueIndices.slice().sort(function(a,b){return a-b}).map(function(i){var c=patchClues[i];return i+':'+(c.number==null?'_':c.number)+':'+c.type+':'+c.h+'x'+c.w}).join('|')}
 function patchRecentKey(){return patchSize+'|'+difficulty('#patchDifficulty')}
-function startPatchTimer(){clearInterval(patchTimerId);patchStartedAt=Date.now();var timer=q('#patchTimer');function tick(){timer.textContent=fmtTime(Date.now()-patchStartedAt)}tick();patchTimerId=setInterval(tick,500)}
+function startPatchTimer(){clearInterval(patchTimerId);var timer=q('#patchTimer');if(!timer)return;patchStartedAt=Date.now();function tick(){timer.textContent=fmtTime(Date.now()-patchStartedAt)}tick();patchTimerId=setInterval(tick,500)}
 function stopPatchTimer(){clearInterval(patchTimerId);patchTimerId=null}
 function buildPatchPuzzle(){var key=patchRecentKey(),recent=patchRecent[key]||(patchRecent[key]=[]);for(var attempt=0;attempt<80;attempt++){var rects=generatePatchPartition();buildPatchClues(rects);if(countPatchSolutions(2)!==1)continue;var level=difficulty('#patchDifficulty'),ratio={easy:0,medium:.12,hard:.24,expert:.38,master:.55}[level]||.12,hideTarget=Math.floor(patchClueIndices.length*ratio),order=shuffle(patchClueIndices.slice()),hidden=0;for(var k=0;k<order.length&&hidden<hideTarget;k++){var clue=order[k],old=patchClues[clue].number;patchClues[clue].number=null;if(patchRectCandidatesForClue(clue).length===1)hidden++;else patchClues[clue].number=old}if(countPatchSolutions(2)!==1)continue;var sig=patchSignature();if(recent.indexOf(sig)>=0)continue;signatureListPush(recent,sig,1400);return}throw new Error('Unable to generate a unique Patches puzzle')}
 function patchCellsInRect(a,b){var ar=Math.floor(a/patchSize),ac=a%patchSize,br=Math.floor(b/patchSize),bc=b%patchSize,minr=Math.min(ar,br),maxr=Math.max(ar,br),minc=Math.min(ac,bc),maxc=Math.max(ac,bc),out=[];for(var r=minr;r<=maxr;r++)for(var c=minc;c<=maxc;c++)out.push(r*patchSize+c);return out}

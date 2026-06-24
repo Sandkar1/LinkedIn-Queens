@@ -994,6 +994,28 @@ button{border-color:var(--line);background:linear-gradient(#fffaf0,#f4eadb)}
 .mini-head{justify-content:center!important}
 .mini-controls{width:100%;justify-content:center!important}
 @media(max-width:760px){.mini-controls{margin-left:auto;margin-right:auto}}
+/* Mobile-safe layout: prevent horizontal clipping and keep game controls readable. */
+@media(max-width:760px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden}
+  body{padding:8px}
+  .app,.mini-game-layout,.mini-main,.mini-side{width:100%;min-width:0}
+  .mini-game-layout{padding-top:44px}
+  .mini-head{display:grid;grid-template-columns:1fr;justify-items:center;gap:10px;text-align:center}
+  .mini-title{justify-content:center;text-align:left}
+  .mini-timer{justify-self:center}
+  .mini-controls{display:flex!important;width:100%!important;justify-content:center!important;gap:7px}
+  .mini-controls .mini-size-control{flex:1 1 140px;width:auto!important;max-width:210px;justify-content:space-between}
+  .patch-board,.sudoku-board,.zip-board,.tango-wrap{margin-left:auto;margin-right:auto}
+  .mini-actions{width:100%}
+}
+/* Mobile back navigation stays in flow and cannot overlap game content. */
+@media(max-width:760px){
+  .game-screen{position:relative}
+  .suite-back{position:static!important;display:inline-flex;margin:0 0 10px 2px;vertical-align:top}
+  .mini-game-screen{padding-top:0}
+  .mini-game-layout{padding-top:0!important}
+  #queensScreen .app{margin-top:0}
+}
 </style>
 </head>
 <body>

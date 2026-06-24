@@ -1023,6 +1023,28 @@ button{border-color:var(--line);background:linear-gradient(#fffaf0,#f4eadb)}
 @media(max-width:760px){.mini-controls{margin-left:auto;margin-right:auto}}
 /* Compact elapsed-time display for playable mini games. */
 .mini-timer{min-width:74px;padding:.55rem .72rem;border:1px solid #d5bd95;border-radius:12px;background:#fff8e8;color:#3f3427;box-shadow:inset 0 1px rgba(255,250,240,.9);font-variant-numeric:tabular-nums;font-size:.94rem;font-weight:850;letter-spacing:.035em;text-align:center;white-space:nowrap}
+/* Mobile-safe layout: prevent horizontal clipping and keep game controls readable. */
+@media(max-width:760px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden}
+  body{padding:8px}
+  .app,.mini-game-layout,.mini-main,.mini-side{width:100%;min-width:0}
+  .mini-game-layout{padding-top:44px}
+  .mini-head{display:grid;grid-template-columns:1fr;justify-items:center;gap:10px;text-align:center}
+  .mini-title{justify-content:center;text-align:left}
+  .mini-timer{justify-self:center}
+  .mini-controls{display:flex!important;width:100%!important;justify-content:center!important;gap:7px}
+  .mini-controls .mini-size-control{flex:1 1 140px;width:auto!important;max-width:210px;justify-content:space-between}
+  .patch-board,.sudoku-board,.zip-board,.tango-wrap{margin-left:auto;margin-right:auto}
+  .mini-actions{width:100%}
+}
+/* Mobile back navigation stays in flow and cannot overlap game content. */
+@media(max-width:760px){
+  .game-screen{position:relative}
+  .suite-back{position:static!important;display:inline-flex;margin:0 0 10px 2px;vertical-align:top}
+  .mini-game-screen{padding-top:0}
+  .mini-game-layout{padding-top:0!important}
+  #queensScreen .app{margin-top:0}
+}
 </style>
 </head>
 <body>
@@ -1588,7 +1610,7 @@ function sudokuTarget(){
   return Math.floor(range.easy-(range.easy-range.master)*curve)
 }
 function sudokuRecentKey(){return sudokuSize+'|'+difficulty('#sudokuDifficulty')}
-function startSudokuTimer(){clearInterval(sudokuTimerId);sudokuStartedAt=Date.now();var timer=q('#sudokuTimer');function tick(){timer.textContent=fmtTime(Date.now()-sudokuStartedAt)}tick();sudokuTimerId=setInterval(tick,500)}
+function startSudokuTimer(){clearInterval(sudokuTimerId);var timer=q('#sudokuTimer');if(!timer)return;sudokuStartedAt=Date.now();function tick(){timer.textContent=fmtTime(Date.now()-sudokuStartedAt)}tick();sudokuTimerId=setInterval(tick,500)}
 function stopSudokuTimer(){clearInterval(sudokuTimerId);sudokuTimerId=null}
 function generateSudokuPuzzle(){var key=sudokuRecentKey(),recent=sudokuRecent[key]||(sudokuRecent[key]=[]);for(var attempt=0;attempt<70;attempt++){sudokuSolution=makeSudokuSolution();sudokuPuzzle=sudokuSolution.slice();var target=sudokuTarget(),positions=shuffle(range(sudokuSize*sudokuSize)),givens=sudokuPuzzle.length;for(var k=0;k<positions.length&&givens>target;k++){var i=positions[k],old=sudokuPuzzle[i];sudokuPuzzle[i]=0;if(countSudokuSolutions(sudokuPuzzle,2)!==1)sudokuPuzzle[i]=old;else givens--}var sig=sudokuSolution.join(',')+'|'+sudokuPuzzle.join('');if(recent.indexOf(sig)<0&&countSudokuSolutions(sudokuPuzzle,2)===1){signatureListPush(recent,sig,1000);break}}sudokuValues=sudokuPuzzle.slice()}
 function sudokuConflicts(){var bad=new Set();function check(ids){var seen={};ids.forEach(function(i){var v=sudokuValues[i];if(!v)return;(seen[v]||(seen[v]=[])).push(i)});Object.keys(seen).forEach(function(k){if(seen[k].length>1)seen[k].forEach(function(i){bad.add(i)})})}for(var r=0;r<sudokuSize;r++)check(range(sudokuSize).map(function(c){return r*sudokuSize+c}));for(var c=0;c<sudokuSize;c++)check(range(sudokuSize).map(function(r){return r*sudokuSize+c}));for(var br=0;br<sudokuSize;br+=sudokuBoxRows)for(var bc=0;bc<sudokuSize;bc+=sudokuBoxCols){var ids=[];for(r=0;r<sudokuBoxRows;r++)for(c=0;c<sudokuBoxCols;c++)ids.push((br+r)*sudokuSize+bc+c);check(ids)}return bad}
