@@ -952,26 +952,29 @@ button.primary{
 .cross-clue-bar::after{content:"⌄";position:absolute;right:18px;top:50%;transform:translateY(-56%);font-size:1.25rem;color:#7c858c}
 @media(max-width:760px){.queens-controls{grid-template-columns:auto minmax(72px,1fr) auto}.queens-controls .size-help{grid-column:1/-1}.cross-ladder{gap:9px}.cross-ladder-row{min-height:54px}.cross-card{min-height:54px}.cross-clue-bar{margin-left:-14px;margin-right:-14px}}
 
+/* Unified board rendering: one shared frame treatment prevents clipped and mismatched grid borders. */
+.patch-board,.sudoku-board,.zip-board,.tango-board{
+  border-color:#26313c;
+  border-radius:13px;
+  background:#26313c;
+  box-shadow:0 12px 26px rgba(24,34,46,.16),0 0 0 1px rgba(255,255,255,.78);
+  isolation:isolate;
+}
+.patch-cell,.sudoku-cell,.zip-cell,.tango-cell{
+  min-width:0;
+  min-height:0;
+  margin:0;
+  background-clip:padding-box;
+  border-color:#aab6c2;
+}
+.sudoku-cell{
+  border-color:#8e9aa6;
+  box-shadow:none;
+}
+.sudoku-cell.given{background:#e8f7f1;color:#176448}
 </style>
 </head>
 <body>
-
-<section class="game-screen games-home" id="homeScreen">
-  <div class="games-hub">
-    <h1>Connect over fun, daily games</h1>
-    <p>Prep your mind for the workday and compare results.</p>
-    <div class="game-list">
-      <button class="game-launch" data-game="wend" type="button"><span class="game-copy"><span class="game-kicker">Weave through words</span><span class="game-name">Wend</span></span><span class="game-art art-wend"><span class="hub-icon wend-icon"><span>W</span><span>E</span><span>D</span><span>N</span></span></span></button>
-      <button class="game-launch" data-game="patches" type="button"><span class="game-copy"><span class="game-kicker">Piece it together</span><span class="game-name">Patches</span></span><span class="game-art art-patches"><span class="hub-icon patches-icon"><span class="patch-card one"><b>3</b></span><span class="patch-card two"></span><span class="patch-card three"></span></span></span></button>
-      <button class="game-launch" data-game="sudoku" type="button"><span class="game-copy"><span class="game-kicker">The classic game, made mini</span><span class="game-name">Mini Sudoku</span></span><span class="game-art art-sudoku"><span class="hub-icon sudoku-icon"><span>1</span><span></span><span></span><span></span><span>2</span><span></span><span>3</span><span></span><span></span></span></span></button>
-      <button class="game-launch" data-game="zip" type="button"><span class="game-copy"><span class="game-kicker">Complete the path</span><span class="game-name">Zip</span></span><span class="game-art art-zip"><span class="hub-icon zip-icon"><span class="zip-track"><i></i></span></span></span></button>
-      <button class="game-launch" data-game="tango" type="button"><span class="game-copy"><span class="game-kicker">Harmonize the grid</span><span class="game-name">Tango</span></span><span class="game-art art-tango"><span class="hub-icon tango-icon"></span></span></button>
-      <button class="game-launch" data-game="queens" type="button"><span class="game-copy"><span class="game-kicker">Crown each region</span><span class="game-name">Queens</span></span><span class="game-art art-queens"><span class="hub-icon queens-icon"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></span></button>
-      <button class="game-launch" data-game="pinpoint" type="button"><span class="game-copy"><span class="game-kicker">Guess the category</span><span class="game-name">Pinpoint</span></span><span class="game-art art-pinpoint"><span class="hub-icon pinpoint-icon"></span></span></button>
-      <button class="game-launch" data-game="crossclimb" type="button"><span class="game-copy"><span class="game-kicker">Unlock a trivia ladder</span><span class="game-name">Crossclimb</span></span><span class="game-art art-crossclimb"><span class="hub-icon cross-icon"></span></span></button>
-    </div>
-  </div>
-</section>
 
 <section class="game-screen" id="queensScreen" hidden><button class="suite-back" data-home type="button">‹ All games</button>
 <div class="app">
@@ -1461,9 +1464,9 @@ var activeGame='home',restartCurrent=function(){};
 function setMiniStatus(id,text,type){var el=q(id);el.textContent=text;el.className='mini-status'+(type?' '+type:'')}
 function showScreen(name){qa('.game-screen').forEach(function(el){el.hidden=true});var id=name==='home'?'homeScreen':name+'Screen',screen=q('#'+id);if(!screen)return;screen.hidden=false;activeGame=name;window.scrollTo(0,0)}
 qa('[data-game]').forEach(function(btn){btn.addEventListener('click',function(){showScreen(btn.dataset.game)})});
-qa('[data-home]').forEach(function(btn){btn.addEventListener('click',function(){showScreen('home')})});
+qa('[data-home]').forEach(function(btn){btn.addEventListener('click',function(){window.location.assign('index.html')})});
 function showSuiteWin(title,text,again){q('#suiteWinTitle').textContent=title;q('#suiteWinText').textContent=text;q('#suiteWin').classList.add('show');restartCurrent=again||function(){}}
-q('#suiteWinHome').addEventListener('click',function(){q('#suiteWin').classList.remove('show');showScreen('home')});
+q('#suiteWinHome').addEventListener('click',function(){q('#suiteWin').classList.remove('show');window.location.assign('index.html')});
 q('#suiteWinAgain').addEventListener('click',function(){q('#suiteWin').classList.remove('show');restartCurrent()});
 
 /* Wend: each generated letter grid is checked and only its single verified word partition is accepted. */
@@ -1630,7 +1633,7 @@ window.__dailyGamesDebug={
   getSudoku:function(){return{size:sudokuSize,puzzle:sudokuPuzzle.slice(),solution:sudokuSolution.slice()}},
   getTango:function(){return{size:tangoSize,solution:tangoSolution.slice(),givens:Array.from(tangoGivens),relations:tangoRelations.slice()}}
 };
-showScreen('home');
+showScreen('queens');
 })();
 
 
