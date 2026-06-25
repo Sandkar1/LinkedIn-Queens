@@ -1,4 +1,44 @@
 document.body.insertAdjacentHTML('afterbegin',`
+<section class="game-screen games-home" id="homeScreen" hidden>
+  <main class="games-hub" aria-labelledby="homeTitle">
+    <h1 id="homeTitle">Daily Games</h1>
+    <p>Pick a puzzle and play it in the shared game suite.</p>
+    <div class="game-list">
+      <a class="game-launch" data-game="wend" href="wend.html">
+        <span class="game-copy"><span class="game-kicker">Words</span><span class="game-name">Wend</span></span>
+        <span class="game-art art-wend" aria-hidden="true"><span class="hub-icon wend-icon"><span>W</span><span>E</span><span>N</span><span>D</span></span></span>
+      </a>
+      <a class="game-launch" data-game="patches" href="patches.html">
+        <span class="game-copy"><span class="game-kicker">Logic</span><span class="game-name">Patches</span></span>
+        <span class="game-art art-patches" aria-hidden="true"><span class="hub-icon patches-icon"><span class="patch-card one"><b>4</b></span><span class="patch-card two"></span><span class="patch-card three"></span></span></span>
+      </a>
+      <a class="game-launch" data-game="sudoku" href="sudoku.html">
+        <span class="game-copy"><span class="game-kicker">Numbers</span><span class="game-name">Mini Sudoku</span></span>
+        <span class="game-art art-sudoku" aria-hidden="true"><span class="hub-icon sudoku-icon"><span>1</span><span></span><span>4</span><span></span><span>3</span><span></span><span>2</span><span></span><span></span></span></span>
+      </a>
+      <a class="game-launch" data-game="zip" href="zip.html">
+        <span class="game-copy"><span class="game-kicker">Path</span><span class="game-name">Zip</span></span>
+        <span class="game-art art-zip" aria-hidden="true"><span class="hub-icon zip-icon"><span class="zip-track"><i></i></span></span></span>
+      </a>
+      <a class="game-launch" data-game="tango" href="tango.html">
+        <span class="game-copy"><span class="game-kicker">Grid</span><span class="game-name">Tango</span></span>
+        <span class="game-art art-tango" aria-hidden="true"><span class="hub-icon tango-icon"></span></span>
+      </a>
+      <a class="game-launch" data-game="queens" href="queens.html">
+        <span class="game-copy"><span class="game-kicker">Regions</span><span class="game-name">Queens</span></span>
+        <span class="game-art art-queens" aria-hidden="true"><span class="hub-icon queens-icon"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></span>
+      </a>
+      <a class="game-launch" data-game="pinpoint" href="pinpoint.html">
+        <span class="game-copy"><span class="game-kicker">Clues</span><span class="game-name">Pinpoint</span></span>
+        <span class="game-art art-pinpoint" aria-hidden="true"><span class="hub-icon pinpoint-icon"></span></span>
+      </a>
+      <a class="game-launch" data-game="crossclimb" href="crossclimb.html">
+        <span class="game-copy"><span class="game-kicker">Words</span><span class="game-name">Crossclimb</span></span>
+        <span class="game-art art-crossclimb" aria-hidden="true"><span class="hub-icon cross-icon"></span></span>
+      </a>
+    </div>
+  </main>
+</section>
 <section class="game-screen" id="queensScreen" hidden><button class="suite-back" data-home type="button">‹ All games</button>
 <div class="app">
   <main class="card main">
@@ -487,8 +527,8 @@ function signatureListPush(list,value,max){if(list.indexOf(value)<0)list.push(va
 function gridNeighbors(i,n){var r=Math.floor(i/n),c=i%n,out=[];if(r>0)out.push(i-n);if(r<n-1)out.push(i+n);if(c>0)out.push(i-1);if(c<n-1)out.push(i+1);return out}
 var activeGame='home',restartCurrent=function(){};
 function setMiniStatus(id,text,type){var el=q(id);el.textContent=text;el.className='mini-status'+(type?' '+type:'')}
-function showScreen(name){qa('.game-screen').forEach(function(el){el.hidden=true});var id=name==='home'?'homeScreen':name+'Screen',screen=q('#'+id);if(!screen)return;screen.hidden=false;activeGame=name;window.scrollTo(0,0)}
-qa('[data-game]').forEach(function(btn){btn.addEventListener('click',function(){showScreen(btn.dataset.game)})});
+function showScreen(name){qa('.game-screen').forEach(function(el){el.hidden=true});var id=name==='home'?'homeScreen':name+'Screen',screen=q('#'+id);if(!screen&&name!=='home'){screen=q('#homeScreen');name='home'}if(!screen)return;screen.hidden=false;activeGame=name;window.scrollTo(0,0)}
+qa('[data-game]').forEach(function(btn){btn.addEventListener('click',function(){if(btn.getAttribute('href'))return;showScreen(btn.dataset.game)})});
 qa('[data-home]').forEach(function(btn){btn.addEventListener('click',function(){window.location.assign('index.html')})});
 function showSuiteWin(title,text,again){q('#suiteWinTitle').textContent=title;q('#suiteWinText').textContent=text;q('#suiteWin').classList.add('show');restartCurrent=again||function(){}}
 q('#suiteWinHome').addEventListener('click',function(){q('#suiteWin').classList.remove('show');window.location.assign('index.html')});
