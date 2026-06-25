@@ -13,6 +13,17 @@ function Invoke-Git {
   }
 }
 
+function Test-StagedChanges {
+  & git diff --cached --quiet
+  if ($LASTEXITCODE -eq 0) {
+    return $false
+  }
+  if ($LASTEXITCODE -eq 1) {
+    return $true
+  }
+  throw 'Unable to check staged changes.'
+}
+
 if (-not (Test-Path -LiteralPath '.git')) {
   throw 'This script must be run from the repository root.'
 }
@@ -23,13 +34,13 @@ if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($origin)) {
 }
 
 Invoke-Git @('switch', 'main')
-Invoke-Git @('add', '--all')
 
-$stagedChanges = & git diff --cached --quiet
-if ($LASTEXITCODE -eq 1) {
+if (-not (Test-StagedChanges)) {
+  Invoke-Git @('add', '--all')
+}
+
+if (Test-StagedChanges) {
   Invoke-Git @('commit', '-m', $Message)
-} elseif ($LASTEXITCODE -ne 0) {
-  throw 'Unable to check staged changes.'
 }
 
 $remoteMain = & git ls-remote --heads origin main
@@ -37,7 +48,7 @@ if ($LASTEXITCODE -ne 0) {
   throw 'Unable to reach origin.'
 }
 if ($remoteMain) {
-  Invoke-Git @('pull', '--rebase', 'origin', 'main')
+  Invoke-Git @('pull', '--rebase', '--autostash', 'origin', 'main')
 }
 
 Invoke-Git @('push', '--set-upstream', 'origin', 'main')
