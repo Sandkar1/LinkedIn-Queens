@@ -12,7 +12,7 @@ document.body.insertAdjacentHTML('afterbegin',`
         <span class="game-copy"><span class="game-kicker">Logic</span><span class="game-name">Patches</span></span>
         <span class="game-art art-patches" aria-hidden="true"><span class="hub-icon patches-icon"><span class="patch-card one"><b>4</b></span><span class="patch-card two"></span><span class="patch-card three"></span></span></span>
       </a>
-      <a class="game-launch" data-game="sudoku" href="sudoku.html">
+      <a class="game-launch" data-game="sudoku" href="minisudoku.html">
         <span class="game-copy"><span class="game-kicker">Numbers</span><span class="game-name">Mini Sudoku</span></span>
         <span class="game-art art-sudoku" aria-hidden="true"><span class="hub-icon sudoku-icon"><span>1</span><span></span><span>4</span><span></span><span>3</span><span></span><span>2</span><span></span><span></span></span></span>
       </a>
