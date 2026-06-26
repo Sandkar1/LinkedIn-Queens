@@ -4,8 +4,8 @@ document.body.insertAdjacentHTML('afterbegin',`
     <h1 id="homeTitle">Daily Games</h1>
     <p>Pick a puzzle and play it in the shared game suite.</p>
     <div class="game-list">
-      <a class="game-launch" data-game="wend" href="wend.html">
-        <span class="game-copy"><span class="game-kicker">Words</span><span class="game-name">Wend</span></span>
+      <a class="game-launch under-construction" data-game="wend" href="wend.html" aria-disabled="true">
+        <span class="game-copy"><span class="game-kicker">Words</span><span class="game-name">Wend</span><span class="construction-badge">Under construction</span></span>
         <span class="game-art art-wend" aria-hidden="true"><span class="hub-icon wend-icon"><span>W</span><span>E</span><span>N</span><span>D</span></span></span>
       </a>
       <a class="game-launch" data-game="patches" href="patches.html">
@@ -16,24 +16,24 @@ document.body.insertAdjacentHTML('afterbegin',`
         <span class="game-copy"><span class="game-kicker">Numbers</span><span class="game-name">Mini Sudoku</span></span>
         <span class="game-art art-sudoku" aria-hidden="true"><span class="hub-icon sudoku-icon"><span>1</span><span></span><span>4</span><span></span><span>3</span><span></span><span>2</span><span></span><span></span></span></span>
       </a>
-      <a class="game-launch" data-game="zip" href="zip.html">
-        <span class="game-copy"><span class="game-kicker">Path</span><span class="game-name">Zip</span></span>
+      <a class="game-launch under-construction" data-game="zip" href="zip.html" aria-disabled="true">
+        <span class="game-copy"><span class="game-kicker">Path</span><span class="game-name">Zip</span><span class="construction-badge">Under construction</span></span>
         <span class="game-art art-zip" aria-hidden="true"><span class="hub-icon zip-icon"><span class="zip-track"><i></i></span></span></span>
       </a>
-      <a class="game-launch" data-game="tango" href="tango.html">
-        <span class="game-copy"><span class="game-kicker">Grid</span><span class="game-name">Tango</span></span>
+      <a class="game-launch under-construction" data-game="tango" href="tango.html" aria-disabled="true">
+        <span class="game-copy"><span class="game-kicker">Grid</span><span class="game-name">Tango</span><span class="construction-badge">Under construction</span></span>
         <span class="game-art art-tango" aria-hidden="true"><span class="hub-icon tango-icon"></span></span>
       </a>
       <a class="game-launch" data-game="queens" href="queens.html">
         <span class="game-copy"><span class="game-kicker">Regions</span><span class="game-name">Queens</span></span>
         <span class="game-art art-queens" aria-hidden="true"><span class="hub-icon queens-icon"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></span>
       </a>
-      <a class="game-launch" data-game="pinpoint" href="pinpoint.html">
-        <span class="game-copy"><span class="game-kicker">Clues</span><span class="game-name">Pinpoint</span></span>
+      <a class="game-launch under-construction" data-game="pinpoint" href="pinpoint.html" aria-disabled="true">
+        <span class="game-copy"><span class="game-kicker">Clues</span><span class="game-name">Pinpoint</span><span class="construction-badge">Under construction</span></span>
         <span class="game-art art-pinpoint" aria-hidden="true"><span class="hub-icon pinpoint-icon"></span></span>
       </a>
-      <a class="game-launch" data-game="crossclimb" href="crossclimb.html">
-        <span class="game-copy"><span class="game-kicker">Words</span><span class="game-name">Crossclimb</span></span>
+      <a class="game-launch under-construction" data-game="crossclimb" href="crossclimb.html" aria-disabled="true">
+        <span class="game-copy"><span class="game-kicker">Words</span><span class="game-name">Crossclimb</span><span class="construction-badge">Under construction</span></span>
         <span class="game-art art-crossclimb" aria-hidden="true"><span class="hub-icon cross-icon"></span></span>
       </a>
     </div>
@@ -550,7 +550,7 @@ window.addEventListener('popstate',function(){
   }
 });
 function showScreen(name){qa('.game-screen').forEach(function(el){el.hidden=true});var id=name==='home'?'homeScreen':name+'Screen',screen=q('#'+id);if(!screen&&name!=='home'){screen=q('#homeScreen');name='home'}if(!screen)return;screen.hidden=false;activeGame=name;window.scrollTo(0,0);armMobileBackGuard()}
-qa('[data-game]').forEach(function(btn){btn.addEventListener('click',function(){if(btn.getAttribute('href'))return;showScreen(btn.dataset.game)})});
+qa('[data-game]').forEach(function(btn){btn.addEventListener('click',function(e){if(btn.classList.contains('under-construction')){e.preventDefault();return}if(btn.getAttribute('href'))return;showScreen(btn.dataset.game)})});
 qa('[data-home]').forEach(function(btn){btn.addEventListener('click',function(){window.location.assign('index.html')})});
 function showSuiteWin(title,text,again){q('#suiteWinTitle').textContent=title;q('#suiteWinText').textContent=text;q('#suiteWin').classList.add('show');restartCurrent=again||function(){}}
 q('#suiteWinHome').addEventListener('click',function(){q('#suiteWin').classList.remove('show');window.location.assign('index.html')});
