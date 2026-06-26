@@ -577,7 +577,7 @@ var activeGame='home',restartCurrent=function(){};
 function setMiniStatus(id,text,type){var el=q(id);el.textContent=text;el.className='mini-status'+(type?' '+type:'')}
 var mobileBackGuardArmed=false,mobileBackGuardLeaving=false;
 function mobileBackGuardApplies(){
-  if(activeGame==='home'||mobileBackGuardLeaving)return false;
+  if(mobileBackGuardLeaving)return false;
   if(!window.history||!window.history.pushState||!window.matchMedia)return false;
   return window.matchMedia('(max-width: 760px), (pointer: coarse)').matches;
 }
@@ -590,7 +590,8 @@ window.addEventListener('popstate',function(){
   if(!mobileBackGuardArmed||mobileBackGuardLeaving)return;
   mobileBackGuardArmed=false;
   if(!mobileBackGuardApplies())return;
-  if(window.confirm('Leave Daily Games? Your current puzzle progress may be lost.')){
+  var message=activeGame==='home'?'Leave Daily Games?':'Leave Daily Games? Your current puzzle progress may be lost.';
+  if(window.confirm(message)){
     mobileBackGuardLeaving=true;
     window.setTimeout(function(){window.history.back()},0);
   }else{
@@ -831,5 +832,10 @@ window.__dailyGamesDebug={
   getSudokuGenerationStats:function(){return sudokuLastGenerationStats&&Object.assign({},sudokuLastGenerationStats)},
   getTango:function(){return{size:tangoSize,solution:tangoSolution.slice(),givens:Array.from(tangoGivens),relations:tangoRelations.slice()}}
 };
+if('serviceWorker' in navigator&&window.isSecureContext){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
 showScreen((document.body&&document.body.dataset.startGame)||'home');
 })();
