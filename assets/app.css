@@ -921,7 +921,8 @@ button.primary{
 
 /* v9: five-level controls, drag-based Patches, and mobile Crossclimb */
 .queens-controls{grid-template-columns:auto minmax(78px,110px) auto 1fr}
-.patch-board{touch-action:none;-webkit-user-select:none;user-select:none}
+.patch-board,.patch-cell,.patch-cell .clue{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.patch-board{overscroll-behavior:contain}
 .patch-cell.clue-cell{cursor:grab}
 .patch-cell.clue-cell:active{cursor:grabbing}
 .patch-cell.drag-origin{box-shadow:inset 0 0 0 4px #0a66c2,0 0 0 2px rgba(255,250,240,.92);z-index:8}
@@ -1150,10 +1151,11 @@ button{border-color:var(--line);background:linear-gradient(#fffaf0,#f4eadb)}
   color:#3f3427;
 }
 #queensScreen .queens-controls{
-  grid-template-columns:auto minmax(70px,96px) auto minmax(0,1fr);
+  grid-template-columns:auto minmax(92px,120px) auto minmax(112px,140px) auto minmax(0,1fr);
   gap:8px;
 }
-#queensScreen .size-control input{
+#queensScreen .size-control input,
+#queensScreen .size-control select{
   background:#fffaf0;
   border-color:#cdb28b;
   color:#3f3427;
@@ -1253,16 +1255,21 @@ button{border-color:var(--line);background:linear-gradient(#fffaf0,#f4eadb)}
     font-size:.78rem;
   }
   #queensScreen .queens-controls{
-    grid-template-columns:auto minmax(58px,72px) minmax(74px,92px);
+    grid-template-columns:auto minmax(92px,1fr);
     margin-bottom:8px;
     padding:7px;
     gap:6px;
     border-radius:11px;
   }
+  #queensScreen .queens-controls button,
+  #queensScreen .queens-controls .size-help{
+    grid-column:1/-1;
+  }
   #queensScreen .size-control label{
     font-size:.74rem;
   }
   #queensScreen .size-control input,
+  #queensScreen .size-control select,
   #queensScreen .size-control button{
     height:32px;
     min-height:32px;
