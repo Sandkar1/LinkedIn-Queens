@@ -1344,3 +1344,74 @@ button{border-color:var(--line);background:linear-gradient(#fffaf0,#f4eadb)}
     font-size:.68rem;
   }
 }
+
+/* Shared compact back button for Queens, Patches, and Mini Sudoku. */
+#queensScreen .suite-back,
+#patchesScreen .suite-back,
+#sudokuScreen .suite-back{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  min-height:30px;
+  padding:4px 10px;
+  border:1px solid #ddc8a6;
+  border-radius:9px;
+  background:#fff8e8;
+  box-shadow:none;
+  color:#5b4630;
+  font-size:.78rem;
+  font-weight:820;
+  line-height:1.1;
+}
+@media(max-width:760px){
+  #queensScreen .suite-back,
+  #patchesScreen .suite-back,
+  #sudokuScreen .suite-back{
+    position:static!important;
+    margin:0 0 6px 2px;
+  }
+}
+
+/* Mobile guardrails for the three board games. */
+#patchesScreen .mini-title,
+#sudokuScreen .mini-title,
+#queensScreen .title,
+#patchesScreen .mini-title>div,
+#sudokuScreen .mini-title>div,
+#queensScreen .title>div:last-child{
+  min-width:0;
+}
+#patchesScreen .mini-title h1,
+#sudokuScreen .mini-title h1,
+#queensScreen .title h1{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+@media(max-width:760px){
+  #queensScreen select,
+  #patchesScreen select,
+  #sudokuScreen select{
+    font-size:16px;
+  }
+  #queensScreen .actions button,
+  #patchesScreen .mini-actions button,
+  #sudokuScreen .mini-actions button{
+    overflow-wrap:anywhere;
+  }
+}
+@media(max-width:360px){
+  #patchesScreen .mini-controls,
+  #sudokuScreen .mini-controls{
+    grid-template-columns:1fr;
+  }
+  #queensScreen .actions{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  #queensScreen .actions .primary{
+    grid-column:span 2;
+  }
+  #queensScreen .mock-tools{
+    grid-template-columns:1fr;
+  }
+}
