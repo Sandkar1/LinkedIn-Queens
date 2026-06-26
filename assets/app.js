@@ -527,7 +527,29 @@ function signatureListPush(list,value,max){if(list.indexOf(value)<0)list.push(va
 function gridNeighbors(i,n){var r=Math.floor(i/n),c=i%n,out=[];if(r>0)out.push(i-n);if(r<n-1)out.push(i+n);if(c>0)out.push(i-1);if(c<n-1)out.push(i+1);return out}
 var activeGame='home',restartCurrent=function(){};
 function setMiniStatus(id,text,type){var el=q(id);el.textContent=text;el.className='mini-status'+(type?' '+type:'')}
-function showScreen(name){qa('.game-screen').forEach(function(el){el.hidden=true});var id=name==='home'?'homeScreen':name+'Screen',screen=q('#'+id);if(!screen&&name!=='home'){screen=q('#homeScreen');name='home'}if(!screen)return;screen.hidden=false;activeGame=name;window.scrollTo(0,0)}
+var mobileBackGuardArmed=false,mobileBackGuardLeaving=false;
+function mobileBackGuardApplies(){
+  if(activeGame==='home'||mobileBackGuardLeaving)return false;
+  if(!window.history||!window.history.pushState||!window.matchMedia)return false;
+  return window.matchMedia('(max-width: 760px), (pointer: coarse)').matches;
+}
+function armMobileBackGuard(){
+  if(mobileBackGuardArmed||!mobileBackGuardApplies())return;
+  window.history.pushState({dailyGamesBackGuard:true},'',window.location.href);
+  mobileBackGuardArmed=true;
+}
+window.addEventListener('popstate',function(){
+  if(!mobileBackGuardArmed||mobileBackGuardLeaving)return;
+  mobileBackGuardArmed=false;
+  if(!mobileBackGuardApplies())return;
+  if(window.confirm('Leave Daily Games? Your current puzzle progress may be lost.')){
+    mobileBackGuardLeaving=true;
+    window.setTimeout(function(){window.history.back()},0);
+  }else{
+    window.setTimeout(armMobileBackGuard,0);
+  }
+});
+function showScreen(name){qa('.game-screen').forEach(function(el){el.hidden=true});var id=name==='home'?'homeScreen':name+'Screen',screen=q('#'+id);if(!screen&&name!=='home'){screen=q('#homeScreen');name='home'}if(!screen)return;screen.hidden=false;activeGame=name;window.scrollTo(0,0);armMobileBackGuard()}
 qa('[data-game]').forEach(function(btn){btn.addEventListener('click',function(){if(btn.getAttribute('href'))return;showScreen(btn.dataset.game)})});
 qa('[data-home]').forEach(function(btn){btn.addEventListener('click',function(){window.location.assign('index.html')})});
 function showSuiteWin(title,text,again){q('#suiteWinTitle').textContent=title;q('#suiteWinText').textContent=text;q('#suiteWin').classList.add('show');restartCurrent=again||function(){}}
