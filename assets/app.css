@@ -1099,6 +1099,28 @@ button{border-color:var(--line);background:linear-gradient(#fffaf0,#f4eadb)}
 #sudokuScreen .sudoku-cell.given{background:#e3f2e2!important;color:#165b3a!important}
 #sudokuScreen .sudoku-cell.conflict{background:#ffe3d9!important;color:#9d2d21!important}
 #sudokuScreen .sudoku-cell.selected{background:#fff0c6!important;box-shadow:inset 0 0 0 3px #1769d2,0 0 0 1px rgba(23,105,210,.2)!important}
+#sudokuScreen .sudoku-cell.hint-target,#sudokuScreen .sudoku-cell.mistake{position:relative;z-index:1}
+#sudokuScreen .sudoku-cell.hint-target::after,#sudokuScreen .sudoku-cell.mistake::after{
+  content:"";
+  position:absolute;
+  inset:10%;
+  border-radius:8px;
+  pointer-events:none;
+}
+#sudokuScreen .sudoku-cell.hint-target::after{
+  border:3px solid #1769d2;
+  background:rgba(23,105,210,.14);
+  box-shadow:0 0 0 3px rgba(255,250,240,.72),0 0 0 6px rgba(23,105,210,.22),0 0 18px rgba(23,105,210,.22);
+  animation:hintPulse .72s var(--ease) infinite alternate;
+}
+#sudokuScreen .sudoku-cell.mistake::after{
+  border:3px solid #b42318;
+  background:rgba(180,35,24,.18);
+  box-shadow:0 0 0 3px rgba(255,250,240,.72),0 0 0 6px rgba(180,35,24,.22),0 0 18px rgba(180,35,24,.22);
+}
+#sudokuScreen .mini-status.hint{background:#eef5ff;color:#173d63;border-color:#a8c8ef;box-shadow:inset 3px 0 0 #1769d2}
+#sudokuScreen .mini-status.hint ol{margin:.1rem 0 .1rem;padding-left:1.35rem}
+#sudokuScreen .mini-status.hint li{margin:.18rem 0}
 #sudokuScreen .sudoku-keypad{gap:7px;margin:10px auto 0}
 #sudokuScreen .sudoku-key{min-height:46px;border-color:#c8ad85;border-radius:10px;background:#fff5dd;font-size:1rem;box-shadow:0 2px 4px rgba(66,46,22,.10)}
 #sudokuScreen .sudoku-key-clear{min-height:38px}
